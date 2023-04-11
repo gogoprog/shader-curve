@@ -1,0 +1,159 @@
+
+<!-- Licensed under a BSD license. See license.html for license -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>WebGL2 - No Data - Triangles Circles</title>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+  </body>
+</html>
+<script src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
+<script>
+'use strict';
+const gl = document.querySelector('#c').getContext('webgl2');
+
+const vs = `#version 300 es
+uniform int numVerts;
+uniform vec2 resolution;
+
+out vec2 height;
+
+#define PI radians(180.0)
+
+
+vec2 computePosition(float t) {
+
+    const int NUM_POINTS = 10;
+
+    vec2 p[NUM_POINTS];
+    p[0] = vec2(-1.0, -1.0);
+    p[1] = vec2(-0.9, 0.8);
+    p[2] = vec2(0.4, 0.2);
+    p[3] = vec2(0.6, -0.8);
+    p[4] = vec2(0.8, 0.2);
+    p[5] = vec2(0.0, 0.0);
+    p[6] = vec2(1.2, -0.2);
+    p[7] = vec2(1.4, 0.2);
+    p[8] = vec2(1.0, 0.0);
+    p[9] = vec2(-1.0, -1.0);
+
+    int segment = int(t * float(NUM_POINTS - 3));
+    t = t * float(NUM_POINTS - 3) - float(segment);
+
+    // Calculate the Catmull-Rom spline for the segment
+    vec2 a = p[segment];
+    vec2 b = p[segment + 1];
+    vec2 c = p[segment + 2];
+    vec2 d = p[segment + 3];
+
+    vec2 position = 0.5 * (
+        (2.0 * b) +
+        (-a + c) * t +
+        (2.0 * a - 5.0 * b + 4.0 * c - d) * t * t +
+        (-a + 3.0 * b - 3.0 * c + d) * t * t * t
+    );
+
+    return position;
+}
+
+void main() {
+  int quads_count = numVerts / 6;
+  int quad_index = gl_VertexID / 6;
+  float t = float(quad_index) / float(quads_count);
+  float t2 = float(quad_index+1) / float(quads_count);
+  vec2 pos1 = computePosition(t);
+  vec2 pos2 = computePosition(t2);
+
+  int index = gl_VertexID % 6;
+  vec2 final_pos;
+
+  float thickness = 0.05;
+
+  vec2 dir = pos2 - pos1;
+  vec2 normDir = normalize(dir);
+  vec2 perpDir = vec2(-normDir.y, normDir.x);
+  vec2 halfPerpDir = perpDir * (thickness);
+
+  vec2 quadCorner1 = pos1 + halfPerpDir;
+  vec2 quadCorner2 = pos1 - halfPerpDir;
+  vec2 quadCorner3 = pos2 - halfPerpDir;
+  vec2 quadCorner4 = pos2 + halfPerpDir;
+
+  switch(index) {
+    case 0:
+      final_pos = quadCorner1;
+      height.x = 0.0;
+      break;
+    case 1:
+      final_pos = quadCorner2;
+      height.x = 1.0;
+      break;
+    case 2:
+      final_pos = quadCorner4;
+      height.x = 0.0;
+      break;
+    case 3:
+      final_pos = quadCorner3;
+      height.x = 1.0;
+      break;
+    case 4:
+      final_pos = quadCorner2;
+      height.x = 1.0;
+      break;
+    case 5:
+      final_pos = quadCorner4;
+      height.x = 0.0;
+      break;
+
+  }
+
+  gl_Position = vec4(final_pos, 0, 1);
+}
+`;
+
+const fs = `#version 300 es
+precision highp float;
+
+in vec2 height;
+
+out vec4 outColor;
+
+void main() {
+  float alpha = 1.0 - abs(height.x - 0.5) * 2.0;
+  outColor = vec4(1, 0, 0, alpha);
+}
+`;
+
+// setup GLSL program
+const program = webglUtils.createProgramFromSources(gl, [vs, fs]);
+const numVertsLoc = gl.getUniformLocation(program, 'numVerts');
+const resolutionLoc = gl.getUniformLocation(program, 'resolution');
+
+// Make a buffer with just a count in it.
+
+const numVerts = 6 * 100;
+
+// draw
+function render(time) {
+  time *= 0.001;
+
+  webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  gl.clearColor(0.2, 0.2, 0.2, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  gl.useProgram(program);
+
+  gl.uniform1i(numVertsLoc, numVerts);
+  gl.uniform2f(resolutionLoc, gl.canvas.width, gl.canvas.height);
+
+  const offset = 0;
+  gl.drawArrays(gl.TRIANGLES, offset, numVerts);
+}
+render();
+</script>
+
