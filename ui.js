@@ -1,4 +1,4 @@
-function dragElement(elmnt) {
+function dragElement(elmnt, callback) {
     var pos1 = 0,
         pos2 = 0,
         pos3 = 0,
@@ -26,8 +26,13 @@ function dragElement(elmnt) {
         pos3 = e.clientX;
         pos4 = e.clientY;
         // set the element's new position:
-        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        //
+        var y = (elmnt.offsetTop - pos2);
+        var x = (elmnt.offsetLeft - pos1);
+        elmnt.style.top = y + "px";
+        elmnt.style.left = x + "px";
+
+        callback(x, y);
     }
 
     function closeDragElement() {
@@ -37,4 +42,11 @@ function dragElement(elmnt) {
     }
 }
 
-dragElement(document.getElementsByClassName("point")[0]);
+
+function addPoint(callback) {
+    var elemDiv = document.createElement('div');
+    elemDiv.className = "point";
+    document.body.appendChild(elemDiv);
+    dragElement(elemDiv, callback);
+}
+

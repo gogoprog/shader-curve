@@ -50,3 +50,8 @@ var gui = new dat.GUI();
 gui.add(settings, 'quads', 5, 500).step(1);
 gui.add(settings, 'thickness', 0.01, 0.1).step(0.001);
 
+addPoint(function(x, y) {
+    console.log(x);
+    console.log(y);
+});
+
