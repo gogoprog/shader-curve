@@ -13,17 +13,21 @@
 </body>
 
 </html>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js" type="text/javascript"></script>
-<script src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
-<script>
-  'use strict';
-  const c = document.querySelector('#c');
-  const gl = document.querySelector('#c').getContext('webgl2');
 
-  c.width = 800;
-  c.height = 600;
+<script type="x-shader/x-fragment" id="curve-fs">#version 300 es
+precision highp float;
 
-  const vs = `#version 300 es
+in vec2 height;
+
+out vec4 outColor;
+
+void main() {
+    float alpha = 1.0 - abs(height.x - 0.5) * 2.0;
+    outColor = vec4(1.0, 1.0, 1.0, alpha);
+}
+</script>
+
+<script type="x-shader/x-vertex" id="curve-vs">#version 300 es
 uniform int numVerts;
 uniform vec2 resolution;
 uniform float thickness;
@@ -48,7 +52,6 @@ vec2 getPoint(int index)
 
     return p[index];
 }
-
 
 vec2 computePosition(float t) {
     int segment = int(t * float(NUM_POINTS - 3));
@@ -144,61 +147,8 @@ void main() {
 
   gl_Position = vec4(final_pos, 0, 1);
 }
-`;
-
-  const fs = `#version 300 es
-precision highp float;
-
-in vec2 height;
-
-out vec4 outColor;
-
-void main() {
-  float alpha = 1.0 - abs(height.x - 0.5) * 2.0;
-  outColor = vec4(1.0, 1.0, 1.0, alpha);
-}
-`;
-
-  var settings = {
-    quads: 10,
-    thickness : 0.05
-  };
-
-  const program = webglUtils.createProgramFromSources(gl, [vs, fs]);
-  const numVertsLoc = gl.getUniformLocation(program, 'numVerts');
-  const resolutionLoc = gl.getUniformLocation(program, 'resolution');
-  const thicknessLoc = gl.getUniformLocation(program, 'thickness');
-
-
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-  webglUtils.resizeCanvasToDisplaySize(gl.canvas);
-
-  // draw
-  function render(time) {
-    time *= 0.001;
-
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.clearColor(0.1, 0.1, 0.2, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    gl.useProgram(program);
-
-    const numVerts = 6 * settings.quads;
-    gl.uniform1i(numVertsLoc, numVerts);
-    gl.uniform1f(thicknessLoc, settings.thickness);
-    gl.uniform2f(resolutionLoc, gl.canvas.width, gl.canvas.height);
-
-    const offset = 0;
-    gl.drawArrays(gl.TRIANGLES, offset, numVerts);
-    //gl.drawArrays(gl.LINE_STRIP, offset, numVerts);
-
-    window.requestAnimationFrame(render);
-  }
-  render();
-
-  var gui = new dat.GUI();
-  gui.add(settings, 'quads', 5, 500).step(1);
-  gui.add(settings, 'thickness', 0.01, 0.1).step(0.001);
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js" type="text/javascript"></script>
+<script src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
+<script src="./main.js"></script>
