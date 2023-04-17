@@ -72,9 +72,12 @@ class Main {
         gui.add(settings, 'quads', 5, 500).step(1);
         gui.add(settings, 'thickness', 0.01, 0.1).step(0.001);
         addPoint(0, 0);
+        addPoint(100, 50);
         addPoint(200, 200);
         addPoint(300, 400);
-        addPoint(600, 600);
+        addPoint(400, 200);
+        addPoint(600, 300);
+        addPoint(700, 700);
     }
 
     function addPoint(x, y) {

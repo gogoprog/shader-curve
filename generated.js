@@ -42,9 +42,12 @@ Main.prototype = {
 		gui.add(this.settings,"quads",5,500).step(1);
 		gui.add(this.settings,"thickness",0.01,0.1).step(0.001);
 		this.addPoint(0,0);
+		this.addPoint(100,50);
 		this.addPoint(200,200);
 		this.addPoint(300,400);
-		this.addPoint(600,600);
+		this.addPoint(400,200);
+		this.addPoint(600,300);
+		this.addPoint(700,700);
 	}
 	,addPoint: function(x,y) {
 		var _gthis = this;
