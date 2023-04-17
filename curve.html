@@ -34,9 +34,13 @@ uniform int numVerts;
 uniform vec2 resolution;
 uniform float thickness;
 
+uniform vec2 controlPoints[64];
+uniform int numControlPoints;
+
 out vec2 height;
 
 const int NUM_POINTS = 10;
+
 
 vec2 getPoint(int index) 
 {
@@ -155,7 +159,8 @@ void main() {
   <script src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
 
   <script src="./ui.js"></script>
-  <script src="./main.js"></script>
+  <!-- <script src="./main.js"></script> -->
+  <script src="./generated.js"></script>
 
 
 </body>
