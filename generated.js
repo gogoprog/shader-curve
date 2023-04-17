@@ -1,6 +1,6 @@
 (function ($global) { "use strict";
 var Main = function() {
-	this.settings = { points : [], quads : 10, thickness : 0.05};
+	this.settings = { points : [], quads : 10, thickness : 10};
 	this.canvas = window.document.querySelector("#c");
 	this.gl = this.canvas.getContext("webgl2");
 	this.canvas.width = 800;
@@ -40,14 +40,15 @@ Main.prototype = {
 	,setupUi: function() {
 		var gui = new dat.GUI();
 		gui.add(this.settings,"quads",5,500).step(1);
-		gui.add(this.settings,"thickness",0.01,0.1).step(0.001);
+		gui.add(this.settings,"thickness",1,100).step(1);
 		this.addPoint(0,0);
 		this.addPoint(100,50);
 		this.addPoint(200,200);
 		this.addPoint(300,400);
 		this.addPoint(400,200);
 		this.addPoint(600,300);
-		this.addPoint(700,700);
+		this.addPoint(650,400);
+		this.addPoint(800,600);
 	}
 	,addPoint: function(x,y) {
 		var _gthis = this;

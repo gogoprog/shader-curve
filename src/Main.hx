@@ -15,20 +15,9 @@ class Main {
     private var controlPointsLoc:js.html.webgl.UniformLocation;
 
     private var settings:Dynamic = {
-        points : [
-            /* -1.0, -1.0, */
-            /* -0.9, 0.8, */
-            /* 0.0, 0.2, */
-            /* 0.6, 0.8, */
-            /* 0.8, 0.2, */
-            /* -0.8, -0.5, */
-            /* 0.0, -0.8, */
-            /* 1.0, 0.2, */
-            /* 1.0, 0.0, */
-            /* -1.0, -1.0 */
-        ],
+        points : [],
         quads: 10,
-        thickness: 0.05
+        thickness: 10
     };
 
     public function new() {
@@ -70,14 +59,15 @@ class Main {
     function setupUi() {
         var gui:Dynamic = js.Syntax.code("new dat.GUI()");
         gui.add(settings, 'quads', 5, 500).step(1);
-        gui.add(settings, 'thickness', 0.01, 0.1).step(0.001);
+        gui.add(settings, 'thickness', 1, 100).step(1);
         addPoint(0, 0);
         addPoint(100, 50);
         addPoint(200, 200);
         addPoint(300, 400);
         addPoint(400, 200);
         addPoint(600, 300);
-        addPoint(700, 700);
+        addPoint(650, 400);
+        addPoint(800, 600);
     }
 
     function addPoint(x, y) {
