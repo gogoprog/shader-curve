@@ -39,29 +39,14 @@ uniform int numControlPoints;
 
 out vec2 height;
 
-const int NUM_POINTS = 10;
-
-
-vec2 getPoint(int index) 
+vec2 getPoint(int index)
 {
-    vec2 p[NUM_POINTS];
-    p[0] = vec2(-1.0, -1.0);
-    p[1] = vec2(-0.9, 0.8);
-    p[2] = vec2(0.0, 0.2);
-    p[3] = vec2(0.6, 0.8);
-    p[4] = vec2(0.8, 0.2);
-    p[5] = vec2(-0.8, -0.5);
-    p[6] = vec2(0.0, -0.8);
-    p[7] = vec2(1.0, 0.2);
-    p[8] = vec2(1.0, 0.0);
-    p[9] = vec2(-1.0, -1.0);
-
-    return p[index];
+    return ((controlPoints[index] / resolution) * vec2(2.0, 2.0) + vec2(-1.0,-1.0)) * vec2(1, -1);
 }
 
 vec2 computePosition(float t) {
-    int segment = int(t * float(NUM_POINTS - 3));
-    t = t * float(NUM_POINTS - 3) - float(segment);
+    int segment = int(t * float(numControlPoints - 3));
+    t = t * float(numControlPoints - 3) - float(segment);
 
     // Calculate the Catmull-Rom spline for the segment
     vec2 a = getPoint(segment);
@@ -80,10 +65,9 @@ vec2 computePosition(float t) {
 }
 
 vec2 computeTangent(float t) {
-    int segment = int(t * float(NUM_POINTS - 3));
-    t = t * float(NUM_POINTS - 3) - float(segment);
+    int segment = int(t * float(numControlPoints - 3));
+    t = t * float(numControlPoints - 3) - float(segment);
 
-    // Calculate the Catmull-Rom spline for the segment
     vec2 a = getPoint(segment);
     vec2 b = getPoint(segment + 1);
     vec2 c = getPoint(segment + 2);

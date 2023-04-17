@@ -1,6 +1,6 @@
 (function ($global) { "use strict";
 var Main = function() {
-	this.settings = { quads : 10, thickness : 0.05};
+	this.settings = { points : [], quads : 10, thickness : 0.05};
 	this.canvas = window.document.querySelector("#c");
 	this.gl = this.canvas.getContext("webgl2");
 	this.canvas.width = 800;
@@ -11,6 +11,8 @@ var Main = function() {
 	this.numVertsLoc = this.gl.getUniformLocation(this.program,"numVerts");
 	this.resolutionLoc = this.gl.getUniformLocation(this.program,"resolution");
 	this.thicknessLoc = this.gl.getUniformLocation(this.program,"thickness");
+	this.controlPointsLoc = this.gl.getUniformLocation(this.program,"controlPoints");
+	this.numControlPointsLoc = this.gl.getUniformLocation(this.program,"numControlPoints");
 	this.gl.enable(3042);
 	this.gl.blendFunc(770,771);
 	webglUtils.resizeCanvasToDisplaySize(this.gl.canvas);
@@ -30,6 +32,8 @@ Main.prototype = {
 		this.gl.uniform1i(this.numVertsLoc,numVerts);
 		this.gl.uniform1f(this.thicknessLoc,this.settings.thickness);
 		this.gl.uniform2f(this.resolutionLoc,this.gl.canvas.width,this.gl.canvas.height);
+		this.gl.uniform2fv(this.controlPointsLoc,this.settings.points);
+		this.gl.uniform1i(this.numControlPointsLoc,this.settings.points.length / 2 | 0);
 		this.gl.drawArrays(4,0,numVerts);
 		window.requestAnimationFrame($bind(this,this.render));
 	}
@@ -37,9 +41,19 @@ Main.prototype = {
 		var gui = new dat.GUI();
 		gui.add(this.settings,"quads",5,500).step(1);
 		gui.add(this.settings,"thickness",0.01,0.1).step(0.001);
-		addPoint(function(x,y) {
-			console.log("src/Main.hx:57:",x);
-			console.log("src/Main.hx:58:",y);
+		this.addPoint(0,0);
+		this.addPoint(200,200);
+		this.addPoint(300,400);
+		this.addPoint(600,600);
+	}
+	,addPoint: function(x,y) {
+		var _gthis = this;
+		var index = this.settings.points.length;
+		this.settings.points.push(x);
+		this.settings.points.push(y);
+		addVisualPoint(x,y,function(x,y) {
+			_gthis.settings.points[index] = x;
+			_gthis.settings.points[index + 1] = y;
 		});
 	}
 };

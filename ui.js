@@ -43,10 +43,11 @@ function dragElement(elmnt, callback) {
 }
 
 
-function addPoint(callback) {
-    var elemDiv = document.createElement('div');
-    elemDiv.className = "point";
-    document.body.appendChild(elemDiv);
-    dragElement(elemDiv, callback);
+function addVisualPoint(x, y, callback) {
+    var elem = document.createElement('div');
+    elem.className = "point";
+    document.body.appendChild(elem);
+    dragElement(elem, callback);
+    elem.style.top = y + "px";
+    elem.style.left = x + "px";
 }
-
