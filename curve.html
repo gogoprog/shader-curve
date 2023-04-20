@@ -48,6 +48,26 @@ vec2 getPoint(int index)
     return controlPoints[index];
 }
 
+float intersects(vec2 line1_endpoint1, vec2 line1_endpoint2, vec2 line2_endpoint1, vec2 line2_endpoint2) {
+    vec2 dir1 = line1_endpoint2 - line1_endpoint1;
+    vec2 dir2 = line2_endpoint2 - line2_endpoint1;
+    float det = dir1.x * dir2.y - dir1.y * dir2.x;
+    if (det == 0.0) {
+        return -1.0; // or any value indicating no intersection
+    }
+    vec2 diff = line2_endpoint1 - line1_endpoint1;
+    float inv_det = 1.0 / det;
+    float s = (dir2.y * diff.x - dir2.x * diff.y) * inv_det;
+    float t = (dir1.y * diff.x - dir1.x * diff.y) * inv_det;
+    if (s >= 0.0 && s <= 1.0 && t >= 0.0 && t <= 1.0)
+    {
+        return t;
+    }
+    else {
+        return -1.0; // or any value indicating no intersection
+    }
+}
+
 vec2 computePosition(float t) {
     int segment = int(t * float(numControlPoints - 3));
     t = t * float(numControlPoints - 3) - float(segment);
@@ -86,6 +106,12 @@ vec2 computeTangent(float t) {
     return tangent;
 }
 
+void swap(inout vec2 a, inout vec2 b) {
+    vec2 temp = a;
+    a = b;
+    b = temp;
+}
+
 void main() {
   int quads_count = numVerts / 6;
   int quad_index = gl_VertexID / 6;
@@ -110,6 +136,18 @@ void main() {
   vec2 quadCorner2 = pos1 - hside1;
   vec2 quadCorner3 = pos2 - hside2;
   vec2 quadCorner4 = pos2 + hside2;
+
+  float inter = intersects(quadCorner1, quadCorner2, quadCorner3, quadCorner4);
+
+  if(inter != -1.0) {
+    gl_Position = vec4(0, 0, 0, 1);
+    return;
+   if(inter < 0.5) {
+   quadCorner3 = quadCorner1;
+   } else {
+   quadCorner4 = quadCorner2;
+   }
+  }
 
   switch(index) {
     case 0:
