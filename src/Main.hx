@@ -52,13 +52,13 @@ class Main {
         gl.uniform2fv(controlPointsLoc, settings.points);
         gl.uniform1i(numControlPointsLoc, Std.int(settings.points.length / 2));
         gl.drawArrays(RenderingContext.TRIANGLES, 0, numVerts);
-        //gl.drawArrays(gl.LINE_STRIP, offset, numVerts);
+        /* gl.drawArrays(RenderingContext.LINE_STRIP, 0, numVerts); */
         window.requestAnimationFrame(render);
     }
 
     function setupUi() {
         var gui:Dynamic = js.Syntax.code("new dat.GUI()");
-        gui.add(settings, 'quads', 5, 500).step(1);
+        gui.add(settings, 'quads', 5, 100).step(1);
         gui.add(settings, 'thickness', 1, 100).step(1);
         addPoint(0, 0);
         addPoint(100, 50);

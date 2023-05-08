@@ -39,7 +39,7 @@ Main.prototype = {
 	}
 	,setupUi: function() {
 		var gui = new dat.GUI();
-		gui.add(this.settings,"quads",5,500).step(1);
+		gui.add(this.settings,"quads",5,100).step(1);
 		gui.add(this.settings,"thickness",1,100).step(1);
 		this.addPoint(0,0);
 		this.addPoint(100,50);
